@@ -1,0 +1,7 @@
+FROG AND FUZZ (FNF)
+
+We are two students from Telecom SudParis and this is our final year project based on the driller module for AFL devloped by the Shellphish team.
+
+We aim to create a similar module for honggfuzz capable of finding new basic blocks whenever hongfuzz fails thanks to symbolic execution using the angr framework.
+
+This project is very new hence there is still no documentation. Feel free to help/fork or ask us any questions through email.
