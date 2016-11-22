@@ -3,9 +3,17 @@
 
 #Logfiles#
 logFile
+logErr
 
 #QueueFile#
 queueFile
 
 #Symbol file#
 symbol.py
+
+#Honggfuzz files#
+HONGGFUZZ.REPORT.TXT
+.honggfuzz.*
+SIGABRT.PC.*
+*.sancov
+HF_SANCOV/
