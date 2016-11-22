@@ -1,0 +1,11 @@
+#Compiled source#
+*.pyc
+
+#Logfiles#
+logFile
+
+#QueueFile#
+queueFile
+
+#Symbol file#
+symbol.py

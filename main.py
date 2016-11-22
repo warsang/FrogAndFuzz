@@ -1,11 +1,7 @@
 #!/usr/bin/python2
 
 import sys
-import os
-import glob
-import sancov_script
 import subprocess
-import re
 import thread
 import redis
 import hashlib 
@@ -14,6 +10,8 @@ REDIS_HOST = '149.202.100.64'
 REDIS_PORT = '6379'
 REDIS_DB = '0'
 
+from  listener import hf_sancov_listener
+#from symbol import tracing_func
 def usage():
     print "Usage " + sys.argv[0] + " <Honggfuzz directory> " + \
 	" <input files> "+\
@@ -53,39 +51,11 @@ def clean_redis(red, binary):
 	red.delete("%s-sancovhashesCalled" % binary)
     # delete the sancov 
 	red.delete("%s-sancov" % binary)
-def hf_sancov_listener(threadName,binary_fuzzed):
-    queueFile = open("queueFile","rw")
-    red=connect_redis()
-    print "LISTENER"
-    while(1):
-	file_list_sancov = []
-	file_list_raw = []
-	#Get newest sancov.raw
-	newest_raw = min(glob.iglob('HF_SANCOV/*.raw'), key=os.path.getctime)
-	#create a sancov file
-	file_list_raw.append(newest_raw)
-	file_list_sancov = (sancov_script.RawUnpack(file_list_raw))
-	#Print covered PCS
-	print file_list_sancov
-	file_list_sancov = re.findall(r'\b(\S+.sancov)\b',str(file_list_sancov[0]))
-	print file_list_sancov
-	covered_pc = sancov_script.PrintFiles(file_list_sancov)	
-	#print missing PC
-	missed_pc = sancov_script.PrintMissing(binary_fuzzed,covered_pc)
-	#Save to queue file 
-	# TODO SAVE TO REDIS DB
-	print missed_pc
-	for pc in missed_pc:
-		add_Sancov(binary_fuzzed,red,pc)
-#		print queueFile
-		#queueFile.write(pc + '\n')
-
-
 
 def main():
     if len(sys.argv) < 4:
         usage()
-    print sys.argv
+    #print sys.argv
     #Assign arguments to variables
     honggfuzz_directory = sys.argv[1]
     input_files_directory = sys.argv[2]
@@ -104,9 +74,11 @@ def main():
     errFile.write(err)
     print "i am finally here"
     #Create listener on HF_SANCOV FILE that creates a new sancov file for every raw file created
+    red = connect_redis()
     thread.start_new_thread(hf_sancov_listener,("Thread-1",binary_fuzzed))
     #Begin symbolic/Concolic execution thread for every missed pc
     while(1):
+	#tracing_func(binary_fuzzed,input_files_directory)
 	pass	 
 
 if __name__ == '__main__':
