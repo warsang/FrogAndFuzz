@@ -5,14 +5,14 @@ import redis_com
 
 import sancov_script
 
-def hf_sancov_listener(threadName,binary_fuzzed):
+def hf_sancov_listener(threadName,binary_fuzzed, directory):
     queueFile = open("queueFile","r+")
     red=redis_com.connect_redis()
     while(1):
 	file_list_sancov = []
 	file_list_raw = []
 	#Get newest sancov.raw
-	newest_raw = min(glob.iglob('HF_SANCOV/*.raw'), key=os.path.getctime)
+	newest_raw = min(glob.iglob(directory+'/HF_SANCOV/*.raw'), key=os.path.getctime)
 	#create a sancov file
 	file_list_raw.append(newest_raw)
 	file_list_sancov = (sancov_script.RawUnpack(file_list_raw))
