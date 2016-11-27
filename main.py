@@ -4,7 +4,7 @@ import sys
 import subprocess
 import thread
 
-import redis_com
+
 from  listener import hf_sancov_listener
 
 #from symbol import tracing_func
@@ -38,13 +38,12 @@ def main():
     errFile.write(err)
     #print "i am finally here"
     #Create listener on HF_SANCOV FILE that creates a new sancov file for every raw file created
-    red = redis_com.connect_redis()
+
     thread.start_new_thread(hf_sancov_listener,("Thread-1",binary_fuzzed))
     #Begin symbolic/Concolic execution thread for every missed pc
     while(1):
 	#tracing_func(binary_fuzzed,input_files_directory)
-	pass	 
+	pass
 
 if __name__ == '__main__':
-   main() 
-
+   main()
