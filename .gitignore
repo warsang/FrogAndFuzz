@@ -17,3 +17,6 @@ HONGGFUZZ.REPORT.TXT
 SIGABRT.PC.*
 *.sancov
 HF_SANCOV/
+
+#Config#
+config.py

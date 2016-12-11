@@ -205,6 +205,25 @@ def GetInstrumentedPCs(binary):
   # beginning of the callq instruction. Empirically this is true on x86 and
   # x86_64.
   return set(int(line.strip(), 16) + 4 for line in proc.stdout)
+def GetInstrumentedPCsFormated(binary):
+  # This looks scary, but all it does is extract all offsets where we call:
+  # - __sanitizer_cov() or __sanitizer_cov_with_check(),
+  # - with call or callq,
+  # - directly or via PLT.
+  cmd = "objdump -d %s | " \
+        "grep '^\s\+[0-9a-f]\+:.*\scall\(q\|\)\s\+[0-9a-f]\+ <__sanitizer_cov\(_with_check\|\)\(@plt\|\)>' | " \
+        "grep '^\s\+[0-9a-f]\+' -o" % binary
+  proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                          shell=True)
+  proc.stdin.close()
+  pc_list = []
+  # The PCs we get from objdump are off by 4 bytes, as they point to the
+  # beginning of the callq instruction. Empirically this is true on x86 and
+  # x86_64.
+  pcall=set(int(line.strip(), 16) + 4 for line in proc.stdout)
+  for pc in sorted(pcall):
+      pc_list.append("0x%x" % pc)
+  return pc_list
 
 def PrintMissing(binary,covered_list):
   #Created missed PC list
