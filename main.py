@@ -3,11 +3,18 @@
 import sys
 import subprocess
 import thread
+
+import logging 
 import redis_com
 
 from  listener import hf_sancov_listener
 
 #from symbol import tracing_func
+from driller_call import test_drilling
+
+logging.getLogger("tracer").setLevel(logging.DEBUG)
+logging.getLogger("driller").setLevel(logging.DEBUG)
+
 def usage():
     print "Usage " + sys.argv[0] + " <Honggfuzz directory> " + \
 	" <input files> "+\
@@ -17,6 +24,7 @@ def usage():
     exit(1)
 
 def main():
+    logging.basicConfig(filename = 'temp.log', level = logging.DEBUG)
     if len(sys.argv) < 4:
         usage()
     #print sys.argv
@@ -39,7 +47,7 @@ def main():
     #Begin symbolic/Concolic execution thread for every missed pc
     while(1):
 	#tracing_func(binary_fuzzed,input_files_directory)
-	pass
+	test_drilling(binary_fuzzed,input_files_directory,red)
 
 if __name__ == '__main__':
    main()

@@ -69,14 +69,14 @@ def ReadOneFile(path):
     bits = ReadMagicAndReturnBitness(f, path)
     size -= 8
     s = struct.unpack_from(TypeCodeForStruct(bits) * (size * 8 / bits), f.read(size))
-  print >>sys.stderr, "%s: read %d %d-bit PCs from %s" % (prog_name, size * 8 / bits, bits, path)
+  #print >>sys.stderr, "%s: read %d %d-bit PCs from %s" % (prog_name, size * 8 / bits, bits, path)
   return s
 
 def Merge(files):
   s = set()
   for f in files:
     s = s.union(set(ReadOneFile(f)))
-  print >> sys.stderr, "%s: %d files merged; %d PCs total" % \
+  #print >> sys.stderr, "%s: %d files merged; %d PCs total" % \
     (prog_name, len(files), len(s))
   return sorted(s)
 
@@ -87,8 +87,8 @@ def PrintFiles(files):
     s = Merge(files)
   else:  # If there is just on file, print the PCs in order.
     s = ReadOneFile(files[0])
-    print >> sys.stderr, "%s: 1 file merged; %d PCs total" % \
-      (prog_name, len(s))
+    #print >> sys.stderr, "%s: 1 file merged; %d PCs total" % \
+    #(prog_name, len(s))
   ['0x' + str(i) for i in s]
   for i in s:
     pc_list.append("0x%x" % i)
@@ -120,8 +120,8 @@ def UnpackOneFile(path):
       assert(len(module) == module_length)
       assert(len(blob) == blob_size)
       extracted_file = "%s.%d.sancov" % (module, pid)
-      print >> sys.stderr, "%s: extracting %s" % \
-        (prog_name, extracted_file)
+      #print >> sys.stderr, "%s: extracting %s" % \
+        #(prog_name, extracted_file)
       # The packed file may contain multiple blobs for the same pid/module
       # pair. Append to the end of the file instead of overwriting.
       with open(extracted_file, 'ab') as f2:
@@ -137,7 +137,7 @@ def Unpack(files):
 def UnpackOneRawFile(path, map_path):
   mem_map = []
   with open(map_path, mode="rt") as f_map:
-    print >> sys.stderr, "%s: reading map %s" % (prog_name, map_path)
+    #print >> sys.stderr, "%s: reading map %s" % (prog_name, map_path)
     bits = int(f_map.readline())
     if bits != 32 and bits != 64:
       raise Exception('Wrong bits size in the map')
@@ -151,7 +151,7 @@ def UnpackOneRawFile(path, map_path):
   mem_map_keys = [m[0] for m in mem_map]
 
   with open(path, mode="rb") as f:
-    print >> sys.stderr, "%s: unpacking %s" % (prog_name, path)
+    #print >> sys.stderr, "%s: unpacking %s" % (prog_name, path)
 
     f.seek(0, 2)
     size = f.tell()
@@ -165,7 +165,7 @@ def UnpackOneRawFile(path, map_path):
       (start, end, base, module_path) = mem_map[map_idx]
       assert pc >= start
       if pc >= end:
-        print >> sys.stderr, "warning: %s: pc %x outside of any known mapping" % (prog_name, pc)
+     #   print >> sys.stderr, "warning: %s: pc %x outside of any known mapping" % (prog_name, pc)
         continue
       mem_map_pcs[map_idx].append(pc - base)
 
@@ -173,7 +173,7 @@ def UnpackOneRawFile(path, map_path):
       if len(pc_list) == 0: continue
       assert path.endswith('.sancov.raw')
       dst_path = module_path + '.' + os.path.basename(path)[:-4]
-      print >> sys.stderr, "%s: writing %d PCs to %s" % (prog_name, len(pc_list), dst_path)
+      #print >> sys.stderr, "%s: writing %d PCs to %s" % (prog_name, len(pc_list), dst_path)
       sorted_pc_list = sorted(pc_list)
       pc_buffer = struct.pack(TypeCodeForStruct(bits) * len(pc_list), *sorted_pc_list)
       with open(dst_path, 'ab+') as f2:
@@ -231,15 +231,15 @@ def PrintMissing(binary,covered_list):
   if not os.path.isfile(binary):
     raise Exception('File not found: %s' % binary)
   instrumented = GetInstrumentedPCs(binary)
-  print >> sys.stderr, "%s: found %d instrumented PCs in %s" % (prog_name,
-                                                                len(instrumented),
-                                                                binary)
+  #print >> sys.stderr, "%s: found %d instrumented PCs in %s" % (prog_name,
+  #                                                              len(instrumented),
+  #                                                              binary)
   covered = set(int(line, 16) for line in covered_list)
-  print >> sys.stderr, "%s: read %d PCs from stdin" % (prog_name, len(covered))
+  #print >> sys.stderr, "%s: read %d PCs from stdin" % (prog_name, len(covered))
   missing = instrumented - covered
-  print >> sys.stderr, "%s: %d PCs missing from coverage" % (prog_name, len(missing))
+  #print >> sys.stderr, "%s: %d PCs missing from coverage" % (prog_name, len(missing))
   if (len(missing) > len(instrumented) - len(covered)):
-    print >> sys.stderr, \
+    #print >> sys.stderr, \
         "%s: WARNING: stdin contains PCs not found in binary" % prog_name
   for pc in sorted(missing):
     pc_list.append("0x%x" % pc)
