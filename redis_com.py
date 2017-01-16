@@ -5,8 +5,8 @@ import config
 l = logging.getLogger("redis_com")
 
 
-def connect_redis():
-	pool = redis.ConnectionPool(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB, password=config.REDIS_PASS)
+def connect_redis(redisdb):
+	pool = redis.ConnectionPool(host=config.REDIS_HOST, port=config.REDIS_PORT, db=redisdb, password=config.REDIS_PASS)
 	r = redis.Redis(connection_pool=pool)
 	print "connection redis called"
 	return r
