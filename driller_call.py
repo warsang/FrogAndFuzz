@@ -28,13 +28,14 @@ def test_drilling(threadName, binary_path,input_file_dir,test_case_dir,redis):
 	counter = 0
 	if symbol_input:
 	    #Retrieve last element of the set by converting it to a list. Set contains list so we then have a list of lists:
-	    my_list = list(symbol_input)
-	    if my_list[-1][-1]:
-	    	counter += 1
-		if not os.path.exists(input_file_dir+"/"+threadName):
-		    os.makedirs(input_file_dir+"/"+threadName)
-	    	fd = open(input_file_dir+"/"+threadName+"/"+threadName+"-"+str(counter),'wb+')
-	    	fd.write(my_list[-1][-1])
-	    	fd.close()
+	    sub_list = list(symbol_input)
+	    for my_list in sub_list:
+	    	if my_list[-1]:
+	    		counter += 1
+			if not os.path.exists(input_file_dir+"/"+threadName):
+		    		os.makedirs(input_file_dir+"/"+threadName)
+	    		fd = open(input_file_dir+"/"+threadName+"/"+threadName+"-"+str(counter),'wb+')
+	    		fd.write(my_list[-1])
+	    		fd.close()
 	return 0
 	

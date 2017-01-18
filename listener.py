@@ -14,9 +14,7 @@ def hf_sancov_listener(threadName,binary_fuzzed,binary_fuzzed_instru ,directory,
     old_set = set()
     new_set = set()
     while(1):
-	print 'IN WHILE'
 	if(len(glob.glob(directory+'HF_SANCOV/*.raw'))):
-	    print 'IN IF'
 	    file_list_sancov = []
             file_list_raw = []
             #Get newest sancov.raw
@@ -26,10 +24,19 @@ def hf_sancov_listener(threadName,binary_fuzzed,binary_fuzzed_instru ,directory,
 		continue
 	    #create a sancov file
             file_list_raw.append(newest_raw)
-            file_list_sancov = (sancov_script.RawUnpack(file_list_raw))
+            try:
+	        file_list_sancov = (sancov_script.RawUnpack(file_list_raw))
+	    except:
+	        continue
             #Print covered PCS
-            file_list_sancov = re.findall(r'\b(\S+.sancov)\b',str(file_list_sancov[0]))
-            covered_pc = sancov_script.PrintFiles(file_list_sancov)
+            try:
+	   	 file_list_sancov = re.findall(r'\b(\S+.sancov)\b',str(file_list_sancov[0]))
+	    except:	
+	        continue
+            try:
+		covered_pc = sancov_script.PrintFiles(file_list_sancov)
+	    except:
+		continue
 	    new_set.update(covered_pc)
             # printing the missing PC
             missed_pc = sancov_script.PrintMissing(binary_fuzzed_instru,covered_pc)
@@ -38,7 +45,6 @@ def hf_sancov_listener(threadName,binary_fuzzed,binary_fuzzed_instru ,directory,
             fullsancov=sancov_script.GetInstrumentedPCsFormated(binary_fuzzed_instru)
             redis_com.add_Sancov(binary_fuzzed,red,str(fullsancov).strip('[]'))
             redis_com.add_Missed(binary_fuzzed,red,str(missed_pc).strip('[]'))
-	    print 'this is old set' + repr(old_set) + 'new set' + repr(new_set)
             for pc in missed_pc:
                 queueFile.write(pc + '\n')
 	    if old_set != new_set:

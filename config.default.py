@@ -1,4 +1,5 @@
 REDIS_HOST = ''
 REDIS_PORT = ''
-REDIS_DB = ''
+REDIS_DB1 = ''
+REDIS_DB2 = ''
 REDIS_PASS = ''
