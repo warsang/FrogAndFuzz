@@ -39,7 +39,7 @@ WORKDIR /home/qemu
 RUN wget https://raw.githubusercontent.com/shellphish/shellphish-qemu/master/patches/tracer-qemu.patch
 RUN git apply tracer-qemu.patch
 RUN ./configure --disable-werror
-RUN ./make
+RUN make
 WORKDIR /home
 RUN mkdir qemu2.3
 RUN mv /home/qemu /home/qemu2.3/
