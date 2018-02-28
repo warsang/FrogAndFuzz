@@ -47,7 +47,10 @@ def main():
     #queueFile = open("queueFile","rw")
     # subprocess to run ./../honggfuzz/honggfuzz -f ../../honggfuzz/examples/inputfiles/ -C -- ../../honggfuzz/examples/targets/badcode1 ___FILE___
  #    p = subprocess.Popen([honggfuzz_directory + "/honggfuzz","-f",input_files_directory,"-W",output_directory,"-C","--",binary_fuzzed_instru,"___FILE___ "],stdout=logFile, stderr=logErr)
-    p = subprocess.Popen([honggfuzz_directory + "/honggfuzz","-f",input_files_directory,"-W",output_directory,"-s","-C","--",binary_fuzzed_instru],stdout=logFile, stderr=logErr)
+    # Honggfuzz
+    #p = subprocess.Popen([honggfuzz_directory + "/honggfuzz","--input",input_files_directory,"--workspace",output_directory,"--sancov","--stdin_input","--sanitizers","--",binary_fuzzed_instru],stdout=logFile, stderr=logErr)
+    p = subprocess.Popen([honggfuzz_directory + "/honggfuzz","--input",input_files_directory,"--workspace",output_directory,"--sancov","--sanitizers","--",binary_fuzzed_instru,"___FILE___"],stdout=logFile, stderr=logErr)
+  
     #Create listener on HF_SANCOV FILE that creates a new sancov file for every raw file created
     red = redis_com.connect_redis(config.REDIS_DB1)
     driller_red = redis_com.connect_redis(config.REDIS_DB2)
